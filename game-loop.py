@@ -26,11 +26,12 @@ while running:
         screen.blit(score_text, (10, 10))
 
     ### Screens ###
-    def win_screen(): # TODO in Implment
+    def win_screen(): # TODO in Vaildate
         screen.fill("green")
         
         score_text = font.render(f" You win!, Score: {score}", True, "white")
-        screen.blit(score_text, screen_center)
+        score_rect = score_text.get_rect(center=screen_center)
+        screen.blit(score_text, score_rect)
 
     def lose_screen():
         # TODO in Specify
@@ -41,7 +42,7 @@ while running:
         pygame.draw.circle(screen, "yellow", ((620,360)), 100) 
         show_score()
 
-    win_screen()
+    game_screen()
 
     pygame.display.flip()
     clock.tick(60) #Sets the framerate

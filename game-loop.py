@@ -1,11 +1,14 @@
 import pygame
 
 # Basic setup information
+resolution = (1280, 720)
+screen_center = (resolution[0]//2, resolution[1]//2)
+
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode(resolution)
 pygame.display.set_caption("CS471-Snake")
 clock = pygame.time.Clock()
-running = True
+running = True 
 
 # Init Scoreboard
 score = 0
@@ -23,18 +26,22 @@ while running:
         screen.blit(score_text, (10, 10))
 
     ### Screens ###
-    def win_screen():
+    def win_screen(): # TODO in Implment
         screen.fill("green")
         
         score_text = font.render(f" You win!, Score: {score}", True, "white")
-        screen.blit(score_text, (10, 10))
+        screen.blit(score_text, screen_center)
+
+    def lose_screen():
+        # TODO in Specify
+        print('dummy')
 
     def game_screen():
         screen.fill("green")
         pygame.draw.circle(screen, "yellow", ((620,360)), 100) 
         show_score()
 
-    game_screen()
+    win_screen()
 
     pygame.display.flip()
     clock.tick(60) #Sets the framerate

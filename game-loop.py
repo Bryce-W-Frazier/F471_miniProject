@@ -21,11 +21,20 @@ while running:
     def show_score():
         score_text = font.render(f"Score: {score}", True, "white")
         screen.blit(score_text, (10, 10))
-            
 
-    screen.fill("green")
-    pygame.draw.circle(screen, "yellow", ((620,360)), 100) 
-    show_score()
+    ### Screens ###
+    def win_screen():
+        screen.fill("green")
+        
+        score_text = font.render(f" You win!, Score: {score}", True, "white")
+        screen.blit(score_text, (10, 10))
+
+    def game_screen():
+        screen.fill("green")
+        pygame.draw.circle(screen, "yellow", ((620,360)), 100) 
+        show_score()
+
+    game_screen()
 
     pygame.display.flip()
     clock.tick(60) #Sets the framerate

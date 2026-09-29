@@ -41,12 +41,13 @@ def show_score():
 
 def win_screen(): # TODO in Vaildate
     mpos = pygame.mouse.get_pos()
+    message = f" You win!, Score: {score}, Click to return to menu."
     screen.fill("green")
-    score_text = font.render(f" You win!, Score: {score}", True, "white")
+    score_text = font.render(message, True, "white")
     score_rect = score_text.get_rect(center=screen_center)
     if score_rect.collidepoint(mpos):
 
-        score_text = font.render(f" You win!, Score: {score}", True, "red")
+        score_text = font.render(message, True, "red")
         if pygame.mouse.get_pressed()[0]:
             return State.GAME_MENU
     screen.blit(score_text, score_rect)

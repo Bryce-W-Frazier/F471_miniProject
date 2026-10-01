@@ -11,6 +11,8 @@ class State(Enum):
     HIGHSCORE = "Display Highscores"
     GAME_QUIT = "Close Game"
 
+
+
 state = State.WIN_SCREEN
 
 # Basic setup information
@@ -22,7 +24,6 @@ screen = pygame.display.set_mode(resolution)
 pygame.display.set_caption("CS471-Snake")
 clock = pygame.time.Clock()
 running = True 
-mpos = pygame.mouse.get_pos
 
 # Init Scoreboard
 score = 0
@@ -36,16 +37,17 @@ def show_score():
     screen.blit(score_text, (10, 10))
 
 def nav_button(text, rect, mpos):
+
     pygame.draw.rect(screen, "black", rect, border_radius=8)
     pygame.draw.rect(screen, "white", rect, width=2, border_radius=8)
 
     button_text = font.render(text, True, "gray")
     text_rect = button_text.get_rect(center=rect.center)  
 
-    if text_rect.collidepoint(mpos) and pygame.mouse.get_pressed()[0]:
+    if rect.collidepoint(mpos) and pygame.mouse.get_pressed()[0]:
         pygame.mouse.get_pressed()[0]
         return True
-    elif text_rect.collidepoint(mpos):
+    elif rect.collidepoint(mpos):
         button_text = font.render(text, True, "white")
 
     screen.blit(button_text, text_rect)
@@ -63,24 +65,22 @@ def win_screen():
     score_rect = score_text.get_rect(center=screen_center)
     screen.blit(score_text, score_rect)
 
-    menu_button = pygame.Rect(
-        screen_center[0] - 150,
-        screen_center[1] + 80,
-        300,
-        60
-    )
+    buttons = {
+            "Menu": State.GAME_MENU,
+            "Restart": State.GAME,
+            }
 
-    restart_button = pygame.Rect(
-        screen_center[0] - 150,
-        screen_center[1] + 160,
-        300,
-        60
-    )
+    for i, (text, next_state) in enumerate(buttons.items()):
+        button_rect = pygame.Rect(
+                    screen_center[0] - 150,
+                    screen_center[1] + (80 * (i + 1)),
+                    300,
+                    60
+                )
 
-    if nav_button("Menu", menu_button, mpos):
-        return State.GAME_MENU
-    elif nav_button("Restart", restart_button, mpos):
-        return State.GAME
+        if nav_button(text, button_rect, mpos):
+            return next_state
+
     return State.WIN_SCREEN
 
 def lose_screen():
@@ -104,39 +104,24 @@ def highscore_screen():
 def game_menu():
 
     mpos = pygame.mouse.get_pos()
-    play = font.render("Play", True, (0,0,0))
-    highscore = font.render("Highscores", True, (0,0,0))
-    gameQuit = font.render("Quit", True, (0,0,0))
-
-    play_rect = play.get_rect(center=(620,540))
-    highscore_rect = highscore.get_rect(center=(620, 570))
-    gameQuit_rect = gameQuit.get_rect(center=(620,600))
-
-    if play_rect.collidepoint(mpos):
-        play = font.render("Play", True, (255,0,0))
-
-        if pygame.mouse.get_pressed()[0]:
-            print("Play pressed")
-            return State.GAME
-
-    if highscore_rect.collidepoint(mpos):
-        highscore = font.render("Highscores", True, (255,0,0))
-
-        if pygame.mouse.get_pressed()[0]:
-            print("Highscore Pressed")
-            return State.HIGHSCORE
-
-    if gameQuit_rect.collidepoint(mpos):
-        gameQuit = font.render("Quit", True, (255,0,0))
-
-        if pygame.mouse.get_pressed()[0]:
-            print("Quit Pressed")
-            return State.GAME_QUIT
-
     screen.fill("white")
-    screen.blit(play, play_rect)
-    screen.blit(highscore, highscore_rect)
-    screen.blit(gameQuit, gameQuit_rect)
+    buttons = {
+            "Play": State.GAME,
+            "Highscore": State.HIGHSCORE,
+            "Quit": State.GAME_QUIT,
+
+            }
+
+    for i, (text, next_state) in enumerate(buttons.items()):
+
+        button_rect = pygame.Rect(
+                screen_center[0]-150,
+                screen_center[1]+(80 * (i+1)),
+                300,
+                80,
+        )
+        if nav_button(text, button_rect, mpos):
+            return next_state 
     return State.GAME_MENU
 
 while running:
@@ -144,19 +129,20 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    if state == State.GAME_MENU:
-        state = game_menu()
-    if state == State.GAME:
-        state = game_screen()
-    if state == State.GAME_QUIT:
-        running = False
-    if state == State.LOSE_SCREEN:
-        state = lose_screen()
-    if state == State.HIGHSCORE:
-        state = highscore_screen()
-    if state == State.WIN_SCREEN:
-        state = win_screen()
+    
+    match state: 
+        case State.GAME_MENU:
+            state = game_menu()
+        case State.GAME:
+            state = game_screen()
+        case State.GAME_QUIT:
+            running = False
+        case State.LOSE_SCREEN:
+            state = lose_screen()
+        case State.HIGHSCORE:
+            state = highscore_screen()
+        case State.WIN_SCREEN:
+            state = win_screen()
 
     pygame.display.flip()
     clock.tick(60) #Sets the framerate

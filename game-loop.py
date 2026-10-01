@@ -30,27 +30,57 @@ font = pygame.font.Font(None, 36)
 
 
 
-    ### Game Loop Functions ###
+### UI Functions ###
 def show_score():
     score_text = font.render(f"Score: {score}", True, "white")
     screen.blit(score_text, (10, 10))
 
+def nav_button(text, rect, mpos):
+    pygame.draw.rect(screen, "black", rect, border_radius=8)
+    pygame.draw.rect(screen, "white", rect, width=2, border_radius=8)
+
+    button_text = font.render(text, True, "gray")
+    text_rect = button_text.get_rect(center=rect.center)  
+
+    if text_rect.collidepoint(mpos) and pygame.mouse.get_pressed()[0]:
+        pygame.mouse.get_pressed()[0]
+        return True
+    elif text_rect.collidepoint(mpos):
+        button_text = font.render(text, True, "white")
+
+    screen.blit(button_text, text_rect)
+    return False
+
 
 
 ### Screens ###
-
-def win_screen(): # TODO in Vaildate
+def win_screen():
     mpos = pygame.mouse.get_pos()
-    message = f" You win!, Score: {score}, Click to return to menu."
+    message = f" You win!, Score: {score}"
     screen.fill("green")
+
     score_text = font.render(message, True, "white")
     score_rect = score_text.get_rect(center=screen_center)
-    if score_rect.collidepoint(mpos):
-
-        score_text = font.render(message, True, "red")
-        if pygame.mouse.get_pressed()[0]:
-            return State.GAME_MENU
     screen.blit(score_text, score_rect)
+
+    menu_button = pygame.Rect(
+        screen_center[0] - 150,
+        screen_center[1] + 80,
+        300,
+        60
+    )
+
+    restart_button = pygame.Rect(
+        screen_center[0] - 150,
+        screen_center[1] + 160,
+        300,
+        60
+    )
+
+    if nav_button("Menu", menu_button, mpos):
+        return State.GAME_MENU
+    elif nav_button("Restart", restart_button, mpos):
+        return State.GAME
     return State.WIN_SCREEN
 
 def lose_screen():

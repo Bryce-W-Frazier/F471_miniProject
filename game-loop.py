@@ -36,7 +36,9 @@ def show_score():
     score_text = font.render(f"Score: {score}", True, "white")
     screen.blit(score_text, (10, 10))
 
-def nav_button(text, rect, mpos):
+def nav_button(text, rect, events):
+    mpos = pygame.mouse.get_pos()
+    left_click = False
 
     pygame.draw.rect(screen, "black", rect, border_radius=8)
     pygame.draw.rect(screen, "white", rect, width=2, border_radius=8)
@@ -45,8 +47,9 @@ def nav_button(text, rect, mpos):
     text_rect = button_text.get_rect(center=rect.center)  
 
     if rect.collidepoint(mpos) and pygame.mouse.get_pressed()[0]:
-        pygame.mouse.get_pressed()[0]
-        return True
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                return True
     elif rect.collidepoint(mpos):
         button_text = font.render(text, True, "white")
 
@@ -56,7 +59,7 @@ def nav_button(text, rect, mpos):
 
 
 ### Screens ###
-def win_screen():
+def win_screen(events):
     mpos = pygame.mouse.get_pos()
     message = f" You win!, Score: {score}"
     screen.fill("green")
@@ -78,30 +81,30 @@ def win_screen():
                     60
                 )
 
-        if nav_button(text, button_rect, mpos):
+        if nav_button(text, button_rect, events):
             return next_state
 
     return State.WIN_SCREEN
 
-def lose_screen():
+def lose_screen(events):
     # TODO in Specify
     screen.fill("blue")
     print('Dummy lose Screen')
     return State.GAME_MENU
 
-def game_screen():
+def game_screen(events):
     screen.fill("black")
     show_score()
     print("Dummy Game Screen")
     return State.LOSE_SCREEN
 
-def highscore_screen():
+def highscore_screen(events):
     screen.fill("green")
     show_score()
     print("Dummy Highscore Screen")
     return State.GAME_MENU
 
-def game_menu():
+def game_menu(events):
 
     mpos = pygame.mouse.get_pos()
     screen.fill("white")
@@ -120,29 +123,31 @@ def game_menu():
                 300,
                 80,
         )
-        if nav_button(text, button_rect, mpos):
+        if nav_button(text, button_rect, events):
             return next_state 
     return State.GAME_MENU
 
 while running:
 
-    for event in pygame.event.get():
+    leftClick = False
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
             running = False
-    
+   
     match state: 
         case State.GAME_MENU:
-            state = game_menu()
+            state = game_menu(events)
         case State.GAME:
-            state = game_screen()
+            state = game_screen(events)
         case State.GAME_QUIT:
             running = False
         case State.LOSE_SCREEN:
-            state = lose_screen()
+            state = lose_screen(events)
         case State.HIGHSCORE:
-            state = highscore_screen()
+            state = highscore_screen(events)
         case State.WIN_SCREEN:
-            state = win_screen()
+            state = win_screen(events)
 
     pygame.display.flip()
     clock.tick(60) #Sets the framerate

@@ -1,4 +1,5 @@
 import pygame 
+import random
 from enum import Enum
 
 
@@ -28,6 +29,25 @@ running = True
 # Init Scoreboard
 score = 0
 font = pygame.font.Font(None, 36)
+
+# Snake Setup
+CELL = 20          # size of one grid square in pixels
+MOVE_EVERY = 6     # snake moves once every N frames (lower = faster)
+ 
+def reset_game():
+    global score, snake_position, snake_body, direction, change_to, fruit_position, frame_count
+    score = 0
+    snake_position = [320, 360]
+    snake_body = [[320, 360], [300, 360], [280, 360], [260, 360]]
+    direction = 'RIGHT'
+    change_to = 'RIGHT'
+    fruit_position = new_fruit()
+    frame_count = 0
+
+def new_fruit():
+     return [random.randrange(0, resolution[0] // CELL) * CELL, random.randrange(0, resolution[1] // CELL) * CELL]
+ 
+reset_game()
 
 
 
@@ -93,10 +113,50 @@ def lose_screen(events):
     return State.GAME_MENU
 
 def game_screen(events):
+    global direction, change_to, frame_count
+    for event in events:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                change_to = 'UP'
+            if event.key == pygame.K_DOWN:
+                change_to = 'DOWN'
+            if event.key == pygame.K_LEFT:
+                change_to = 'LEFT'
+            if event.key == pygame.K_RIGHT:
+                change_to = 'RIGHT'
+ 
+    # don't allow the snake to reverse into itself
+    if change_to == 'UP' and direction != 'DOWN':
+        direction = 'UP'
+    if change_to == 'DOWN' and direction != 'UP':
+        direction = 'DOWN'
+    if change_to == 'LEFT' and direction != 'RIGHT':
+        direction = 'LEFT'
+    if change_to == 'RIGHT' and direction != 'LEFT':
+        direction = 'RIGHT'
+
+    # only move on each MOVE_EVERY frames so the snake isn't too fast
+    frame_count += 1
+    if frame_count % MOVE_EVERY == 0:
+        if direction == 'UP':
+            snake_position[1] -= CELL
+        if direction == 'DOWN':
+            snake_position[1] += CELL
+        if direction == 'LEFT':
+            snake_position[0] -= CELL
+        if direction == 'RIGHT':
+            snake_position[0] += CELL
+
+        snake_body.insert(0, list(snake_position))
+        snake_body.pop()
+
+# draw
     screen.fill("black")
+    for pos in snake_body:
+        pygame.draw.rect(screen, "green", pygame.Rect(pos[0], pos[1], CELL, CELL))
+    pygame.draw.rect(screen, "white", pygame.Rect(fruit_position[0], fruit_position[1], CELL, CELL))
     show_score()
-    print("Dummy Game Screen")
-    return State.LOSE_SCREEN
+    return State.GAME
 
 def highscore_screen(events):
     screen.fill("green")

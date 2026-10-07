@@ -138,6 +138,7 @@ def game_screen(events):
     # only move on each MOVE_EVERY frames so the snake isn't too fast
     frame_count += 1
     if frame_count % MOVE_EVERY == 0:
+        global fruit_position, score
         if direction == 'UP':
             snake_position[1] -= CELL
         if direction == 'DOWN':
@@ -148,7 +149,11 @@ def game_screen(events):
             snake_position[0] += CELL
 
         snake_body.insert(0, list(snake_position))
-        snake_body.pop()
+        if snake_position == fruit_position:
+            score += 10
+            fruit_position = new_fruit()
+        else:
+            snake_body.pop()
 
 # draw
     screen.fill("black")

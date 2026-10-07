@@ -82,7 +82,7 @@ def nav_button(text, rect, events):
 def win_screen(events):
     mpos = pygame.mouse.get_pos()
     message = f" You win!, Score: {score}"
-    screen.fill("green")
+    screen.fill("black")
 
     score_text = font.render(message, True, "white")
     score_rect = score_text.get_rect(center=screen_center)

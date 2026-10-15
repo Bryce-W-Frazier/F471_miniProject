@@ -126,9 +126,32 @@ def lose_screen(events):
     True
     """
     # TODO in Specify
-    screen.fill("blue")
-    print('Dummy lose Screen')
-    return State.GAME_MENU
+    mpos = pygame.mouse.get_pos()
+    message = f" You lost!, Score: {score}"
+    screen.fill("black")
+
+    score_text = font.render(message, True, "white")
+    score_rect = score_text.get_rect(center=screen_center)
+    screen.blit(score_text, score_rect)
+
+    buttons = {
+            "Menu": State.GAME_MENU,
+            "Restart": State.GAME,
+            }
+
+    for i, (text, next_state) in enumerate(buttons.items()):
+        button_rect = pygame.Rect(
+                    screen_center[0] - 150,
+                    screen_center[1] + (80 * (i + 1)),
+                    300,
+                    60
+                )
+
+        if nav_button(text, button_rect, events):
+            return next_state
+
+    return State.LOSE_SCREEN
+
 
 def game_screen(events):
     """

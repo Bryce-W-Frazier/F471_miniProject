@@ -14,7 +14,6 @@ class State(Enum):
 
 
 
-state = State.WIN_SCREEN
 
 # Basic setup information
 resolution = (1280, 720)
@@ -24,7 +23,6 @@ pygame.init()
 screen = pygame.display.set_mode(resolution)
 pygame.display.set_caption("CS471-Snake")
 clock = pygame.time.Clock()
-running = True 
 
 # Init Scoreboard
 score = 0
@@ -191,30 +189,36 @@ def game_menu(events):
         if nav_button(text, button_rect, events):
             return next_state 
     return State.GAME_MENU
+def game_loop():
 
-while running:
+    state = State.WIN_SCREEN
+    running = True 
+    while running:
 
-    leftClick = False
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            running = False
-   
-    match state: 
-        case State.GAME_MENU:
-            state = game_menu(events)
-        case State.GAME:
-            state = game_screen(events)
-        case State.GAME_QUIT:
-            running = False
-        case State.LOSE_SCREEN:
-            state = lose_screen(events)
-        case State.HIGHSCORE:
-            state = highscore_screen(events)
-        case State.WIN_SCREEN:
-            state = win_screen(events)
+        leftClick = False
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+       
+        match state: 
+            case State.GAME_MENU:
+                state = game_menu(events)
+            case State.GAME:
+                state = game_screen(events)
+            case State.GAME_QUIT:
+                running = False
+            case State.LOSE_SCREEN:
+                state = lose_screen(events)
+            case State.HIGHSCORE:
+                state = highscore_screen(events)
+            case State.WIN_SCREEN:
+                state = win_screen(events)
 
-    pygame.display.flip()
-    clock.tick(60) #Sets the framerate
+        pygame.display.flip()
+        clock.tick(60) #Sets the framerate
 
-pygame.quit()
+    pygame.quit()
+
+if __name__ == "__main__":
+    game_loop()

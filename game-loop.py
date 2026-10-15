@@ -53,7 +53,6 @@ def new_fruit():
         if pos not in snake_body:
             return pos
  
-reset_game()
 
 
 
@@ -115,6 +114,7 @@ def win_screen(events):
                 )
 
         if nav_button(text, button_rect, events):
+            reset_game()
             return next_state
 
     return State.WIN_SCREEN
@@ -148,6 +148,7 @@ def lose_screen(events):
                 )
 
         if nav_button(text, button_rect, events):
+            reset_game()
             return next_state
 
     return State.LOSE_SCREEN

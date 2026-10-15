@@ -2,6 +2,13 @@ import pygame
 import random
 from enum import Enum
 
+#Checks if we are called by doctest and if we are gives the SDL a dummy screen to draw to
+import os
+import sys
+
+if "doctest" in sys.modules:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
+
 
 # Tracks CUrrent State of Game
 class State(Enum):
@@ -11,8 +18,6 @@ class State(Enum):
     LOSE_SCREEN = "Game was Lost"
     HIGHSCORE = "Display Highscores"
     GAME_QUIT = "Close Game"
-
-
 
 
 # Basic setup information
@@ -78,6 +83,13 @@ def nav_button(text, rect, events):
 
 ### Screens ###
 def win_screen(events):
+
+    """
+    Testing Win screen doesn't change without user input
+    >>> win_screen([]) == State.WIN_SCREEN
+    True
+    """
+
     mpos = pygame.mouse.get_pos()
     message = f" You win!, Score: {score}"
     screen.fill("black")
@@ -105,12 +117,22 @@ def win_screen(events):
     return State.WIN_SCREEN
 
 def lose_screen(events):
+    """
+    Testing Lose screen doesn't change without user input
+    >>> lose_screen([]) == State.LOSE_SCREEN
+    True
+    """
     # TODO in Specify
     screen.fill("blue")
     print('Dummy lose Screen')
     return State.GAME_MENU
 
 def game_screen(events):
+    """
+    Testing Game screen doesn't change without user input
+    >>> game_screen([]) == State.GAME
+    True
+    """
     global direction, change_to, frame_count
     for event in events:
         if event.type == pygame.KEYDOWN:
@@ -162,12 +184,23 @@ def game_screen(events):
     return State.GAME
 
 def highscore_screen(events):
+    """
+    Testing Highscore screen doesn't change without user input
+    >>> highscore_screen([]) == State.HIGHSCORE
+    True
+    """
     screen.fill("green")
     show_score()
     print("Dummy Highscore Screen")
     return State.GAME_MENU
 
 def game_menu(events):
+
+    """
+    Testing Menu screen doesn't change without user input
+    >>> game_menu([]) == State.GAME_MENU
+    True
+    """
 
     mpos = pygame.mouse.get_pos()
     screen.fill("white")
@@ -189,6 +222,7 @@ def game_menu(events):
         if nav_button(text, button_rect, events):
             return next_state 
     return State.GAME_MENU
+
 def game_loop():
 
     state = State.WIN_SCREEN

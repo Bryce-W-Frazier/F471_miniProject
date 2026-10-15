@@ -48,7 +48,10 @@ def reset_game():
     frame_count = 0
 
 def new_fruit():
-     return [random.randrange(0, resolution[0] // CELL) * CELL, random.randrange(0, resolution[1] // CELL) * CELL]
+    while True:
+        pos = [random.randrange(0, resolution[0] // CELL) * CELL, random.randrange(0, resolution[1] // CELL) * CELL]
+        if pos not in snake_body:
+            return pos
  
 reset_game()
 
@@ -174,6 +177,15 @@ def game_screen(events):
             fruit_position = new_fruit()
         else:
             snake_body.pop()
+
+        # wall collision
+        if (snake_position[0] < 0 or snake_position[0] > resolution[0] - CELL or 
+                snake_position[1] < 0 or snake_position[1] > resolution[1] - CELL):
+            return State.LOSE_SCREEN
+
+        # self collision
+        if snake_position in snake_body[1:]:
+            return State.LOSE_SCREEN
 
 # draw
     screen.fill("black")

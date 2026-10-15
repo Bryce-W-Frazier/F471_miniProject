@@ -2,6 +2,13 @@ import pygame
 import random
 from enum import Enum
 
+#Checks if we are called by doctest and if we are gives the SDL a dummy screen to draw to
+import os
+import sys
+
+if "doctest" in sys.modules:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
+
 
 # Tracks CUrrent State of Game
 class State(Enum):
@@ -13,9 +20,6 @@ class State(Enum):
     GAME_QUIT = "Close Game"
 
 
-
-state = State.WIN_SCREEN
-
 # Basic setup information
 resolution = (1280, 720)
 screen_center = (resolution[0]//2, resolution[1]//2)
@@ -24,7 +28,6 @@ pygame.init()
 screen = pygame.display.set_mode(resolution)
 pygame.display.set_caption("CS471-Snake")
 clock = pygame.time.Clock()
-running = True 
 
 # Init Scoreboard
 score = 0
@@ -83,6 +86,13 @@ def nav_button(text, rect, events):
 
 ### Screens ###
 def win_screen(events):
+
+    """
+    Testing Win screen doesn't change without user input
+    >>> win_screen([]) == State.WIN_SCREEN
+    True
+    """
+
     mpos = pygame.mouse.get_pos()
     message = f" You win!, Score: {score}"
     screen.fill("black")
@@ -110,12 +120,22 @@ def win_screen(events):
     return State.WIN_SCREEN
 
 def lose_screen(events):
+    """
+    Testing Lose screen doesn't change without user input
+    >>> lose_screen([]) == State.LOSE_SCREEN
+    True
+    """
     # TODO in Specify
     screen.fill("blue")
     print('Dummy lose Screen')
     return State.GAME_MENU
 
 def game_screen(events):
+    """
+    Testing Game screen doesn't change without user input
+    >>> game_screen([]) == State.GAME
+    True
+    """
     global direction, change_to, frame_count
     for event in events:
         if event.type == pygame.KEYDOWN:
@@ -176,12 +196,23 @@ def game_screen(events):
     return State.GAME
 
 def highscore_screen(events):
+    """
+    Testing Highscore screen doesn't change without user input
+    >>> highscore_screen([]) == State.HIGHSCORE
+    True
+    """
     screen.fill("green")
     show_score()
     print("Dummy Highscore Screen")
     return State.GAME_MENU
 
 def game_menu(events):
+
+    """
+    Testing Menu screen doesn't change without user input
+    >>> game_menu([]) == State.GAME_MENU
+    True
+    """
 
     mpos = pygame.mouse.get_pos()
     screen.fill("white")
@@ -204,34 +235,36 @@ def game_menu(events):
             return next_state 
     return State.GAME_MENU
 
-while running:
+def game_loop():
 
-    leftClick = False
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            running = False
-   
-    previous_state = state
+    state = State.WIN_SCREEN
+    running = True 
+    while running:
 
-    match state: 
-        case State.GAME_MENU:
-            state = game_menu(events)
-        case State.GAME:
-            state = game_screen(events)
-        case State.GAME_QUIT:
-            running = False
-        case State.LOSE_SCREEN:
-            state = lose_screen(events)
-        case State.HIGHSCORE:
-            state = highscore_screen(events)
-        case State.WIN_SCREEN:
-            state = win_screen(events)
+        leftClick = False
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                running = False
+       
+        match state: 
+            case State.GAME_MENU:
+                state = game_menu(events)
+            case State.GAME:
+                state = game_screen(events)
+            case State.GAME_QUIT:
+                running = False
+            case State.LOSE_SCREEN:
+                state = lose_screen(events)
+            case State.HIGHSCORE:
+                state = highscore_screen(events)
+            case State.WIN_SCREEN:
+                state = win_screen(events)
 
-    if state == State.GAME and previous_state != State.GAME:
-        reset_game()
+        pygame.display.flip()
+        clock.tick(60) #Sets the framerate
 
-    pygame.display.flip()
-    clock.tick(60) #Sets the framerate
+    pygame.quit()
 
-pygame.quit()
+if __name__ == "__main__":
+    game_loop()

@@ -55,7 +55,7 @@ def new_fruit():
  
 
 
-
+reset_game()
 ### UI Functions ###
 def show_score():
     score_text = font.render(f"Score: {score}", True, "white")

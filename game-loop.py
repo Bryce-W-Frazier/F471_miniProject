@@ -106,14 +106,24 @@ def end_screen(events, message, state):
     """
     
     update_highscore()
-
     mpos = pygame.mouse.get_pos()
     screen.fill("black")
 
-    score_text = font.render(message, True, "white")
-    score_rect = score_text.get_rect(center=screen_center)
-    screen.blit(score_text, score_rect)
+    # Display Results
+    lines = [
+        message,
+        f"Score: {score}",
+        f"Highscore: {highscore}",
+    ]
+   
+    line_height = font.get_linesize()
+    start_y = screen_center[1] - (len(lines) * line_height) // 2
+    for i, text in enumerate(lines):
+        line = font.render(text, True, "white")
+        rect = line.get_rect(center=(screen_center[0], start_y + i * line_height))
+        screen.blit(line, rect)
 
+    # Nav Menu
     buttons = {
             "Menu": State.GAME_MENU,
             "Restart": State.GAME,
@@ -141,7 +151,7 @@ def win_screen(events):
     True
     """
     return end_screen(events, 
-        f" You win!, Score: {score}", 
+        "You win", 
         State.WIN_SCREEN)
     
 
@@ -152,7 +162,7 @@ def lose_screen(events):
     True
     """
     return end_screen(events, 
-        f" You Lost!, Score: {score}", 
+        "You Lost!", 
         State.LOSE_SCREEN)
 
 

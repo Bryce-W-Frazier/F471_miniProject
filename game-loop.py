@@ -21,6 +21,7 @@ class State(Enum):
 
 
 # Basic setup information
+HIGHSCORE_FILE = "snake_highscore.txt"
 resolution = (1280, 720)
 screen_center = (resolution[0]//2, resolution[1]//2)
 
@@ -31,7 +32,17 @@ clock = pygame.time.Clock()
 
 # Init Scoreboard
 score = 0
+highscore = 0
+try:    
+    with open(HIGHSCORE_FILE, "r") as file:        
+        highscore = int(file.read().strip())
+except FileNotFoundError:      
+    with open(HIGHSCORE_FILE, "w") as file:        
+        file.write("0")
+        
 font = pygame.font.Font(None, 36)
+
+
 
 # Snake Setup
 CELL = 20          # size of one grid square in pixels
@@ -52,6 +63,10 @@ def new_fruit():
         pos = [random.randrange(0, resolution[0] // CELL) * CELL, random.randrange(0, resolution[1] // CELL) * CELL]
         if pos not in snake_body:
             return pos
+        
+def update_highscore():
+    with open(HIGHSCORE_FILE, "w") as file:
+        file.write(str(highscore))
  
 
 
@@ -92,6 +107,8 @@ def win_screen(events):
     True
     """
 
+    update_highscore()
+
     mpos = pygame.mouse.get_pos()
     message = f" You win!, Score: {score}"
     screen.fill("black")
@@ -125,7 +142,9 @@ def lose_screen(events):
     >>> lose_screen([]) == State.LOSE_SCREEN
     True
     """
-    # TODO in Specify
+    
+    update_highscore()
+    
     mpos = pygame.mouse.get_pos()
     message = f" You lost!, Score: {score}"
     screen.fill("black")
@@ -185,7 +204,7 @@ def game_screen(events):
     # only move on each MOVE_EVERY frames so the snake isn't too fast
     frame_count += 1
     if frame_count % MOVE_EVERY == 0:
-        global fruit_position, score
+        global fruit_position, score, highscore
         if direction == 'UP':
             snake_position[1] -= CELL
         if direction == 'DOWN':
@@ -198,6 +217,8 @@ def game_screen(events):
         snake_body.insert(0, list(snake_position))
         if snake_position == fruit_position:
             score += 10
+            if score > highscore:
+                highscore = score
             fruit_position = new_fruit()
         else:
             snake_body.pop()

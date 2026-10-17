@@ -99,6 +99,40 @@ def nav_button(text, rect, events):
 
 
 ### Screens ###
+
+def end_screen(events, message, state):
+    """
+    Workhorse for any end of game screen.
+    """
+    
+    update_highscore()
+
+    mpos = pygame.mouse.get_pos()
+    screen.fill("black")
+
+    score_text = font.render(message, True, "white")
+    score_rect = score_text.get_rect(center=screen_center)
+    screen.blit(score_text, score_rect)
+
+    buttons = {
+            "Menu": State.GAME_MENU,
+            "Restart": State.GAME,
+            }
+
+    for i, (text, next_state) in enumerate(buttons.items()):
+        button_rect = pygame.Rect(
+                    screen_center[0] - 150,
+                    screen_center[1] + (80 * (i + 1)),
+                    300,
+                    60
+                )
+
+        if nav_button(text, button_rect, events):
+            reset_game()
+            return next_state
+
+    return state
+    
 def win_screen(events):
 
     """
@@ -106,35 +140,10 @@ def win_screen(events):
     >>> win_screen([]) == State.WIN_SCREEN
     True
     """
-
-    update_highscore()
-
-    mpos = pygame.mouse.get_pos()
-    message = f" You win!, Score: {score}"
-    screen.fill("black")
-
-    score_text = font.render(message, True, "white")
-    score_rect = score_text.get_rect(center=screen_center)
-    screen.blit(score_text, score_rect)
-
-    buttons = {
-            "Menu": State.GAME_MENU,
-            "Restart": State.GAME,
-            }
-
-    for i, (text, next_state) in enumerate(buttons.items()):
-        button_rect = pygame.Rect(
-                    screen_center[0] - 150,
-                    screen_center[1] + (80 * (i + 1)),
-                    300,
-                    60
-                )
-
-        if nav_button(text, button_rect, events):
-            reset_game()
-            return next_state
-
-    return State.WIN_SCREEN
+    return end_screen(events, 
+        f" You win!, Score: {score}", 
+        State.WIN_SCREEN)
+    
 
 def lose_screen(events):
     """
@@ -142,35 +151,9 @@ def lose_screen(events):
     >>> lose_screen([]) == State.LOSE_SCREEN
     True
     """
-    
-    update_highscore()
-    
-    mpos = pygame.mouse.get_pos()
-    message = f" You lost!, Score: {score}"
-    screen.fill("black")
-
-    score_text = font.render(message, True, "white")
-    score_rect = score_text.get_rect(center=screen_center)
-    screen.blit(score_text, score_rect)
-
-    buttons = {
-            "Menu": State.GAME_MENU,
-            "Restart": State.GAME,
-            }
-
-    for i, (text, next_state) in enumerate(buttons.items()):
-        button_rect = pygame.Rect(
-                    screen_center[0] - 150,
-                    screen_center[1] + (80 * (i + 1)),
-                    300,
-                    60
-                )
-
-        if nav_button(text, button_rect, events):
-            reset_game()
-            return next_state
-
-    return State.LOSE_SCREEN
+    return end_screen(events, 
+        f" You Lost!, Score: {score}", 
+        State.LOSE_SCREEN)
 
 
 def game_screen(events):

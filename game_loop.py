@@ -31,6 +31,7 @@ pygame.display.set_caption("CS471-Snake")
 clock = pygame.time.Clock()
 
 # Init Scoreboard
+SCORE_INCERMENT = 10
 score = 0
 highscore = 0
 try:    
@@ -47,8 +48,36 @@ font = pygame.font.Font(None, 36)
 # Snake Setup
 CELL = 20          # size of one grid square in pixels
 MOVE_EVERY = 6     # snake moves once every N frames (lower = faster)
+MAX_SCORE = ((resolution[0]*resolution[1])/(CELL*CELL))/SCORE_INCERMENT
  
 def reset_game():
+    """
+    Reset all games variables to have consistant game starts.
+    
+    >>> import game_loop as game
+    >>> game.score = "Dummy"
+    >>> game.snake_position = "Dummy"
+    >>> game.snake_body = "Dummy"
+    >>> game.direction = "Dummy"
+    >>> game.change_to = "Dummy"
+    >>> game.frame_count = "Dummy"
+    
+    >>> game.reset_game()
+    
+    >>> game.score
+    0
+    >>> game.snake_position
+    [320, 360]
+    >>> game.snake_body
+    [[320, 360], [300, 360], [280, 360], [260, 360]]
+    >>> game.direction
+    'RIGHT'
+    >>> game.change_to
+    'RIGHT'
+    >>> game.frame_count
+    0
+    """
+
     global score, snake_position, snake_body, direction, change_to, fruit_position, frame_count
     score = 0
     snake_position = [320, 360]
@@ -209,7 +238,7 @@ def game_screen(events):
 
         snake_body.insert(0, list(snake_position))
         if snake_position == fruit_position:
-            score += 10
+            score += SCORE_INCERMENT
             if score > highscore:
                 highscore = score
             fruit_position = new_fruit()
@@ -224,6 +253,10 @@ def game_screen(events):
         # self collision
         if snake_position in snake_body[1:]:
             return State.LOSE_SCREEN
+        
+        # board filled
+        if score == MAX_SCORE:
+            return State.WIN_SCREEN
 
 # draw
     screen.fill("black")
@@ -275,7 +308,7 @@ def game_menu(events):
 
 def game_loop():
 
-    state = State.WIN_SCREEN
+    state = State.GAME_MENU
     running = True 
     while running:
 

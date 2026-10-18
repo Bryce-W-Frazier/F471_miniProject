@@ -88,12 +88,46 @@ def reset_game():
     frame_count = 0
 
 def new_fruit():
+    """
+    Finds a spot for afruit on the game board, without colliding with the snake. 
+    Returns [x, y]
+    
+    >>> import game_loop as game
+    >>> for _i in range(resolution[0]*resolution[1]):
+    ...     pos = new_fruit()
+    ...     assert len(pos) == 2
+
+    ...     for j in range(2):
+    ...         assert pos[j] >= 0 + CELL
+    
+    ...         assert pos[j] <= game.resolution[j] - CELL
+    
+    ...     for j in snake_body:
+    ...         assert pos != j
+    """
     while True:
         pos = [random.randrange(0, resolution[0] // CELL) * CELL, random.randrange(0, resolution[1] // CELL) * CELL]
         if pos not in snake_body:
             return pos
         
 def update_highscore():
+    """
+    Writes the new high score to file. Current highscore must be correct.
+    No return.
+    
+    >>> import os
+    >>> import game_loop as game
+    
+    >>> game.highscore = 1
+    >>> game.HIGHSCORE_FILE = "test.temp"
+    >>> open(game.HIGHSCORE_FILE, "w").close()
+    >>> game.update_highscore()
+    >>> with open(game.HIGHSCORE_FILE) as f:
+    ...     contents = f.read()
+    >>> int(contents) == game.highscore
+    True
+    >>> os.remove(game.HIGHSCORE_FILE)
+    """
     with open(HIGHSCORE_FILE, "w") as file:
         file.write(str(highscore))
  
@@ -102,10 +136,24 @@ def update_highscore():
 reset_game()
 ### UI Functions ###
 def show_score():
+    """
+    Shows the score in the top left corner during the game. No return.
+    
+    >>> show_score()
+    """
+    
     score_text = font.render(f"Score: {score}", True, "white")
     screen.blit(score_text, (10, 10))
 
 def nav_button(text, rect, events):
+    """
+    Renders and watches navigation buttons. Takes text as the message, rect as
+    the area of placement, and events to watch. Returns True when mouse hovers
+    over button, False otherwise.
+    
+    >>> nav_button("test", pygame.Rect(0,0,0,0), pygame.event.get())
+    False
+    """
     mpos = pygame.mouse.get_pos()
     left_click = False
 
@@ -131,7 +179,12 @@ def nav_button(text, rect, events):
 
 def end_screen(events, message, state):
     """
-    Workhorse for any end of game screen.
+    Workhorse for any end of game screen. Takes events for it's event handler,
+    message to display to the player, and it's current state.
+    
+    >>> import game_loop as game
+    >>> end_screen(pygame.event.get(), "Test",game.State.LOSE_SCREEN)
+    <State.LOSE_SCREEN: 'Game was Lost'>
     """
     
     update_highscore()
@@ -187,6 +240,7 @@ def win_screen(events):
 def lose_screen(events):
     """
     Testing Lose screen doesn't change without user input
+    
     >>> lose_screen([]) == State.LOSE_SCREEN
     True
     """
@@ -198,6 +252,7 @@ def lose_screen(events):
 def game_screen(events):
     """
     Testing Game screen doesn't change without user input
+    
     >>> game_screen([]) == State.GAME
     True
     """
@@ -269,6 +324,7 @@ def game_screen(events):
 def highscore_screen(events):
     """
     Testing Highscore screen doesn't change without user input
+    
     >>> highscore_screen([]) == State.HIGHSCORE
     True
     """
@@ -281,6 +337,7 @@ def game_menu(events):
 
     """
     Testing Menu screen doesn't change without user input
+    
     >>> game_menu([]) == State.GAME_MENU
     True
     """
@@ -307,6 +364,9 @@ def game_menu(events):
     return State.GAME_MENU
 
 def game_loop():
+    """
+    Handles the changing states until the user quits.
+    """
 
     state = State.GAME_MENU
     running = True 

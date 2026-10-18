@@ -14,6 +14,6 @@ written by: Michael Baran, Bryce Frazier, and Logan Johnson
 ## Download
 
 
-[Download for Windows](downloads/snake-windows.exe)<br>
-[Download for MacOS](downloads/snake-macos)<br>
-[Download for Linux](downloads/snake-linux)<br>
+[Download for Windows](https://github.com/Bryce-W-Frazier/F471_miniProject/raw/refs/heads/main/downloads/snake-windows.exe)<br>
+[Download for macOS](https://github.com/Bryce-W-Frazier/F471_miniProject/raw/refs/heads/main/downloads/snake-macos)<br>
+[Download for Linux](https://github.com/Bryce-W-Frazier/F471_miniProject/raw/refs/heads/main/downloads/snake-linux)<br>

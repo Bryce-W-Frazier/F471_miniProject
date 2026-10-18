@@ -11,3 +11,9 @@ written by: Michael Baran, Bryce Frazier, and Logan Johnson
 3. pip install pygame
 4. python game-loop.py
 
+## Download
+
+
+[Download for Windows](downloads/snake-windows.exe)<br>
+[Download for MacOS](downloads/snake-macos)<br>
+[Download for Linux](downloads/snake-linux)<br>

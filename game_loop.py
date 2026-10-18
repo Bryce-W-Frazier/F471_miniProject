@@ -343,10 +343,14 @@ def game_menu(events):
     """
 
     mpos = pygame.mouse.get_pos()
-    screen.fill("white")
+    screen.fill("black")
+    
+    title = font.render("Snake", True, "white")
+    title_rect = title.get_rect(center=(screen_center[0], screen_center[1]))
+    screen.blit(title, title_rect)
+    
     buttons = {
             "Play": State.GAME,
-            "Highscore": State.HIGHSCORE,
             "Quit": State.GAME_QUIT,
 
             }

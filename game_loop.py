@@ -16,7 +16,6 @@ class State(Enum):
     GAME      = "Game Play"
     WIN_SCREEN = "Game was won"
     LOSE_SCREEN = "Game was Lost"
-    HIGHSCORE = "Display Highscores"
     GAME_QUIT = "Close Game"
 
 
@@ -155,7 +154,6 @@ def nav_button(text, rect, events):
     False
     """
     mpos = pygame.mouse.get_pos()
-    left_click = False
 
     pygame.draw.rect(screen, "black", rect, border_radius=8)
     pygame.draw.rect(screen, "white", rect, width=2, border_radius=8)
@@ -188,7 +186,6 @@ def end_screen(events, message, state):
     """
     
     update_highscore()
-    mpos = pygame.mouse.get_pos()
     screen.fill("black")
 
     # Display Results
@@ -313,7 +310,7 @@ def game_screen(events):
         if score == MAX_SCORE:
             return State.WIN_SCREEN
 
-# draw
+    # draw
     screen.fill("black")
     for pos in snake_body:
         pygame.draw.rect(screen, "green", pygame.Rect(pos[0], pos[1], CELL, CELL))
@@ -321,17 +318,6 @@ def game_screen(events):
     show_score()
     return State.GAME
 
-def highscore_screen(events):
-    """
-    Testing Highscore screen doesn't change without user input
-    
-    >>> highscore_screen([]) == State.HIGHSCORE
-    True
-    """
-    screen.fill("green")
-    show_score()
-    print("Dummy Highscore Screen")
-    return State.GAME_MENU
 
 def game_menu(events):
 
@@ -342,7 +328,6 @@ def game_menu(events):
     True
     """
 
-    mpos = pygame.mouse.get_pos()
     screen.fill("black")
     
     title = font.render("Snake", True, "white")
@@ -376,7 +361,6 @@ def game_loop():
     running = True 
     while running:
 
-        leftClick = False
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -391,8 +375,6 @@ def game_loop():
                 running = False
             case State.LOSE_SCREEN:
                 state = lose_screen(events)
-            case State.HIGHSCORE:
-                state = highscore_screen(events)
             case State.WIN_SCREEN:
                 state = win_screen(events)
 

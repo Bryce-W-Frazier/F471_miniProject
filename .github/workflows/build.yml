@@ -2,7 +2,9 @@ name: Build Snake Game
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - exeWorkflow
   workflow_dispatch:
 
 jobs:

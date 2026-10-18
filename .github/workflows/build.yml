@@ -1,0 +1,48 @@
+name: Build Snake Game
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: snake-linux
+            executable: snake
+          - os: windows-latest
+            artifact: snake-windows
+            executable: snake.exe
+          - os: macos-latest
+            artifact: snake-macos
+            executable: snake
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pygame pyinstaller
+
+      - name: Build executable
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name snake game_loop.py
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.executable }}
+          if-no-files-found: error

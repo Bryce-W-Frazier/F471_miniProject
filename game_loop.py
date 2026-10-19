@@ -47,7 +47,7 @@ font = pygame.font.Font(None, 36)
 # Snake Setup
 CELL = 20          # size of one grid square in pixels
 MOVE_EVERY = 6     # snake moves once every N frames (lower = faster)
-MAX_SCORE = ((resolution[0]*resolution[1])/(CELL*CELL))/SCORE_INCERMENT
+MAX_SCORE = ((resolution[0]*resolution[1])//(CELL*CELL))//SCORE_INCERMENT - 4*SCORE_INCERMENT
  
 def reset_game():
     """
